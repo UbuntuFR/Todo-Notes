@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo & Notes - Gestionnaire de Tâches</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="stars-background"></div>
+
+    <!-- HEADER WITH DATE/TIME -->
+    <header class="main-header">
+        <div class="header-left">
+            <h1 id="titleBtn" class="title-clickable">✨ TODO & NOTES</h1>
+        </div>
+        <div class="datetime-display">
+            <div id="datetimeDate" class="datetime-date">📅 Chargement...</div>
+            <div id="datetimeTime" class="datetime-time">🕐 00:00:00</div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <div class="main-container">
+        <!-- STATS BAR -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-label">TÂCHES</span>
+                <span class="stat-value" id="totalTodos">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">COMPLÉTÉES</span>
+                <span class="stat-value" id="completedTodos">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">PROGRESSION</span>
+                <span class="stat-value" id="progressPercent">0%</span>
+            </div>
+        </div>
+
+        <!-- TABS -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="notesTab">📝 Notes</button>
+            <button class="tab-btn" data-tab="todosTab">📋 To-Do List</button>
+        </div>
+
+        <!-- NOTES TAB -->
+        <div id="notesTab" class="tab-content active">
+            <div class="add-note-section">
+                <input type="text" id="noteTitleInput" class="input-field" placeholder="Titre de la note...">
+                <textarea id="noteContentInput" class="textarea-field" placeholder="Écris ta note ici... (supporte les liens: https://...)"></textarea>
+                <button id="addNoteBtn" class="btn btn-add">➕ AJOUTER</button>
+            </div>
+
+            <div id="notesList" class="notes-grid"></div>
+            <div id="notesEmpty" class="empty-message">Aucune note</div>
+        </div>
+
+        <!-- TODOS TAB -->
+        <div id="todosTab" class="tab-content">
+            <div class="add-todo-section">
+                <input type="text" id="todoInput" class="input-field" placeholder="Ajouter une tâche...">
+                <button id="addTodoBtn" class="btn btn-add">➕ AJOUTER</button>
+            </div>
+
+            <div class="filter-section">
+                <button class="filter-btn active" data-filter="all">Tout</button>
+                <button class="filter-btn" data-filter="active">Actives</button>
+                <button class="filter-btn" data-filter="completed">Complétées</button>
+            </div>
+
+            <div id="todosList" class="todos-list"></div>
+            <div id="todosEmpty" class="empty-message">Aucune tâche</div>
+        </div>
+    </div>
+
+    <!-- CALCULATOR WIDGET (BOTTOM RIGHT) -->
+    <div class="calculator-widget">
+        <div class="calculator-header">
+            <h4>🧮</h4>
+            <button class="calculator-toggle" id="calcToggle">−</button>
+        </div>
+        <div class="calculator-body" id="calcBody">
+            <input type="text" id="calcDisplay" class="calculator-display" value="0" readonly>
+            <div class="calculator-grid">
+                <button onclick="app.calcClear()" class="calc-btn calc-clear">C</button>
+                <button onclick="app.calcBackspace()" class="calc-btn">←</button>
+                <button onclick="app.calcAppend('/')" class="calc-btn calc-operator">÷</button>
+                <button onclick="app.calcAppend('*')" class="calc-btn calc-operator">×</button>
+                
+                <button onclick="app.calcAppend('7')" class="calc-btn">7</button>
+                <button onclick="app.calcAppend('8')" class="calc-btn">8</button>
+                <button onclick="app.calcAppend('9')" class="calc-btn">9</button>
+                <button onclick="app.calcAppend('-')" class="calc-btn calc-operator">−</button>
+                
+                <button onclick="app.calcAppend('4')" class="calc-btn">4</button>
+                <button onclick="app.calcAppend('5')" class="calc-btn">5</button>
+                <button onclick="app.calcAppend('6')" class="calc-btn">6</button>
+                <button onclick="app.calcAppend('+')" class="calc-btn calc-operator">+</button>
+                
+                <button onclick="app.calcAppend('1')" class="calc-btn">1</button>
+                <button onclick="app.calcAppend('2')" class="calc-btn">2</button>
+                <button onclick="app.calcAppend('3')" class="calc-btn">3</button>
+                <button onclick="app.calcEqual()" class="calc-btn calc-equal">=</button>
+                
+                <button onclick="app.calcAppend('0')" class="calc-btn calc-zero">0</button>
+                <button onclick="app.calcAppend('.')" class="calc-btn">.</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT TODO MODAL -->
+    <div id="editTodoModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✏️ Modifier Tâche</h2>
+                <span class="close" data-modal="editTodo">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="editTodoInput" class="input-field" maxlength="150">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" data-modal="editTodo">❌ Annuler</button>
+                <button id="saveTodoBtn" class="btn btn-save">💾 Sauvegarder</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW NOTE MODAL -->
+    <div id="viewNoteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="viewNoteTitle">Note</h2>
+                <span class="close" data-modal="viewNote">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="viewNoteContent" style="color: #cbd5e1; line-height: 1.8;"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" data-modal="viewNote">❌ Fermer</button>
+                <button id="editNoteBtn" class="btn btn-save">✏️ Éditer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT NOTE MODAL -->
+    <div id="editNoteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✏️ Modifier Note</h2>
+                <span class="close" data-modal="editNote">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="editNoteTitleInput" class="input-field" placeholder="Titre...">
+                <textarea id="editNoteContentInput" class="textarea-field" placeholder="Contenu..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" data-modal="editNote">❌ Annuler</button>
+                <button id="saveNoteBtn" class="btn btn-save">💾 Sauvegarder</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
