@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ Todo & Notes Premium ✨</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="stars-background"></div>
+    
+    <!-- CALCULATRICE WIDGET -->
+    <div class="calculator-widget expanded">
+        <div class="calculator-header">
+            <h3>🧮</h3>
+            <button class="calculator-toggle">−</button>
+        </div>
+        <div class="calculator-body">
+            <input type="text" id="calcDisplay" class="calc-display" readonly value="0">
+            <div class="calc-grid">
+                <button class="calc-btn" onclick="app.calcClear()">C</button>
+                <button class="calc-btn" onclick="app.calcBackspace()">←</button>
+                <button class="calc-btn operator" onclick="app.calcAppend('/')">/</button>
+                <button class="calc-btn operator" onclick="app.calcAppend('*')">×</button>
+                
+                <button class="calc-btn" onclick="app.calcAppend('7')">7</button>
+                <button class="calc-btn" onclick="app.calcAppend('8')">8</button>
+                <button class="calc-btn" onclick="app.calcAppend('9')">9</button>
+                <button class="calc-btn operator" onclick="app.calcAppend('-')">−</button>
+                
+                <button class="calc-btn" onclick="app.calcAppend('4')">4</button>
+                <button class="calc-btn" onclick="app.calcAppend('5')">5</button>
+                <button class="calc-btn" onclick="app.calcAppend('6')">6</button>
+                <button class="calc-btn operator" onclick="app.calcAppend('+')">+</button>
+                
+                <button class="calc-btn" onclick="app.calcAppend('1')">1</button>
+                <button class="calc-btn" onclick="app.calcAppend('2')">2</button>
+                <button class="calc-btn" onclick="app.calcAppend('3')">3</button>
+                <button class="calc-btn operator" onclick="app.calcAppend('.')">,</button>
+                
+                <button class="calc-btn" onclick="app.calcAppend('0')" style="grid-column: span 2;">0</button>
+                <button class="calc-btn equal" onclick="app.calcEqual()">=</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <header>
+            <div class="header-top">
+                <h1>✨ TODO & NOTES</h1>
+                <div class="datetime-container">
+                    <div class="datetime-date" id="datetimeDate"></div>
+                    <div class="datetime-time" id="datetimeTime"></div>
+                </div>
+            </div>
+            <p class="subtitle">Organise ta vie simplement</p>
+        </header>
+
+        <!-- STATS -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-label">Tâches</span>
+                <span class="stat-value" id="totalTodos">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Complétées</span>
+                <span class="stat-value" id="completedTodos">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Progression</span>
+                <span class="stat-value" id="progressPercent">0%</span>
+            </div>
+        </div>
+
+        <!-- TABS -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="todos">📋 To-Do List</button>
+            <button class="tab-btn" data-tab="notes">📝 Notes</button>
+        </div>
+
+        <!-- TODO SECTION -->
+        <div class="tab-content active" id="todos">
+            <div class="add-todo-section">
+                <input 
+                    type="text" 
+                    id="todoInput" 
+                    placeholder="Ajouter une tâche..."
+                    class="input-field"
+                    autocomplete="off"
+                >
+                <button id="addTodoBtn" class="btn btn-add">➕ Ajouter</button>
+            </div>
+
+            <div class="filter-section">
+                <button class="filter-btn active" data-filter="all">Tout</button>
+                <button class="filter-btn" data-filter="active">Actives</button>
+                <button class="filter-btn" data-filter="completed">Complétées</button>
+            </div>
+
+            <div class="todos-list" id="todosList"></div>
+            <div class="empty-message" id="todosEmpty">Aucune tâche</div>
+        </div>
+
+        <!-- NOTES SECTION -->
+        <div class="tab-content" id="notes">
+            <div class="add-note-section">
+                <input 
+                    type="text" 
+                    id="noteTitle" 
+                    placeholder="Titre de la note..."
+                    class="input-field"
+                    autocomplete="off"
+                >
+                <textarea 
+                    id="noteContent" 
+                    placeholder="Contenu de la note..."
+                    class="textarea-field"
+                    rows="5"
+                ></textarea>
+                <button id="addNoteBtn" class="btn btn-add">➕ Créer Note</button>
+            </div>
+
+            <div class="notes-grid" id="notesGrid"></div>
+            <div class="empty-message" id="notesEmpty">Aucune note</div>
+        </div>
+    </div>
+
+    <!-- MODALE EDIT TODO -->
+    <div id="editTodoModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✏️ Éditer la tâche</h2>
+                <span class="close" data-modal="editTodo">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input 
+                    type="text" 
+                    id="editTodoInput" 
+                    class="input-field"
+                    placeholder="Nom de la tâche"
+                    autocomplete="off"
+                >
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" data-modal="editTodo">Annuler</button>
+                <button id="saveTodoBtn" class="btn btn-save">Sauvegarder</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALE EDIT NOTE -->
+    <div id="editNoteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✏️ Éditer la note</h2>
+                <span class="close" data-modal="editNote">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input 
+                    type="text" 
+                    id="editNoteTitle" 
+                    class="input-field"
+                    placeholder="Titre"
+                    autocomplete="off"
+                >
+                <textarea 
+                    id="editNoteContent" 
+                    class="textarea-field"
+                    rows="8"
+                    placeholder="Contenu"
+                ></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" data-modal="editNote">Annuler</button>
+                <button id="saveNoteBtn" class="btn btn-save">Sauvegarder</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
